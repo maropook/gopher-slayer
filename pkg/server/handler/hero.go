@@ -1,34 +1,34 @@
 package handler
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/maropook/gopher-slayer/internal/model"
-	"github.com/maropook/gopher-slayer/internal/service"
+	"github.com/maropook/gopher-slayer/pkg/server/model"
 )
 
 type HeroHandler struct {
-	heroService *service.HeroService
+	db *sql.DB
 }
 
-func NewHeroHandler(heroService *service.HeroService) *HeroHandler {
-	return &HeroHandler{heroService: heroService}
+func NewHeroHandler(db *sql.DB) *HeroHandler {
+	return &HeroHandler{db: db}
 }
 
-// GetHero returns the current hero status.
+// GetHero はヒーローの現在のステータスを返す。
 // GET /api/hero
 func (h *HeroHandler) GetHero(c echo.Context) error {
-	hero, err := h.heroService.GetHero()
+	hero, err := model.GetHero(h.db)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, hero)
 }
 
-// UpdateName updates the hero's name.
+// UpdateName はヒーローの名前を更新する。
 // PUT /api/hero/name
-// This is an example of a PUT endpoint — students can reference this for Lv2.
+// Lv2の参考実装として使える。
 func (h *HeroHandler) UpdateName(c echo.Context) error {
 	var req model.UpdateNameRequest
 	if err := c.Bind(&req); err != nil {
@@ -37,32 +37,31 @@ func (h *HeroHandler) UpdateName(c echo.Context) error {
 	if req.Name == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "name is required"})
 	}
-	if err := h.heroService.UpdateName(req.Name); err != nil {
+	if err := model.UpdateHeroName(h.db, req.Name); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, map[string]string{"message": "Name updated successfully"})
 }
 
-// UpdateExperience updates the hero's experience points.
+// UpdateExperience はヒーローの経験値を更新する。
 // PUT /api/hero/experience
 func (h *HeroHandler) UpdateExperience(c echo.Context) error {
 	var req model.UpdateExperienceRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
 	}
-	if err := h.heroService.UpdateExperience(req.Experience); err != nil {
+	if err := model.UpdateHeroExperience(h.db, req.Experience); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, map[string]string{"message": "Experience updated successfully"})
 }
 
-// UpdateHP updates the hero's current HP.
+// UpdateHP はヒーローの現在HPを更新する。
 // PUT /api/hero/hp
 //
-// [Lv3 workshop task - bug plant location]
-// This handler is fully implemented, but in the bug version the route
-// registration in main.go is commented out, causing 404.
-// Students must add the route: api.PUT("/hero/hp", heroHandler.UpdateHP)
+// [Lv3 バグ仕込み箇所]
+// このハンドラー自体は実装済みだが、バグ版では setting.go のルート登録がコメントアウトされているため404になる。
+// api.PUT("/hero/hp", hero.UpdateHP) を追加することで修正できる。
 func (h *HeroHandler) UpdateHP(c echo.Context) error {
 	var req model.UpdateHPRequest
 	if err := c.Bind(&req); err != nil {
@@ -71,7 +70,7 @@ func (h *HeroHandler) UpdateHP(c echo.Context) error {
 	if req.HP <= 0 {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "hp must be greater than 0"})
 	}
-	if err := h.heroService.UpdateHP(req.HP); err != nil {
+	if err := model.UpdateHeroHP(h.db, req.HP); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, map[string]string{"message": "HP updated successfully"})

@@ -22,6 +22,12 @@ func (h *BattleHandler) Attack(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request body"})
 	}
 	result := model.HeroAttack(req)
+	// [Lv4 バグ仕込み箇所]
+	// Demon 戦ではヒーローの攻撃が反転し、敵を回復させてしまう
+	if req.EnemyName == "Demon" {
+		result.Damage = -result.Damage
+		result.Message = "Your attack was absorbed! " + result.Message
+	}
 	return c.JSON(http.StatusOK, result)
 }
 

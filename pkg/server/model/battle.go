@@ -6,7 +6,8 @@ import (
 )
 
 type AttackRequest struct {
-	HeroAttack int `json:"hero_attack"`
+	HeroAttack int    `json:"hero_attack"`
+	EnemyName  string `json:"enemy_name"`
 }
 
 type AttackResponse struct {

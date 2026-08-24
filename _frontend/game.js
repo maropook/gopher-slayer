@@ -259,7 +259,7 @@ async function heroAttack() {
   try {
     const result = await apiFetch('/battle/attack', {
       method: 'POST',
-      body: JSON.stringify({ hero_attack: hero.attack }),
+      body: JSON.stringify({ hero_attack: hero.attack, enemy_name: enemy.name }),
     });
 
     enemyHP = Math.max(0, enemyHP - result.damage);

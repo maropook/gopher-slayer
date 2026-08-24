@@ -45,7 +45,7 @@ func HeroAttack(req AttackRequest) AttackResponse {
 // かつダメージが負になりヒーローが回復してしまう。
 func EnemyAttack(req EnemyAttackRequest) AttackResponse {
 	time.Sleep(3 * time.Second)
-	damage := -CalculateDamage(req.EnemyAttack)
+	damage := CalculateDamage(req.EnemyAttack)
 	return AttackResponse{
 		Damage:  damage,
 		Message: fmt.Sprintf("%s dealt %d damage!", req.EnemyName, damage),

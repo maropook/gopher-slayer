@@ -83,10 +83,8 @@ func (h *StageHandler) ClearStage(c echo.Context) error {
 	newExp := hero.Experience + expGained
 
 	// 4. 経験値をDBに保存する
-	// [Lv2 バグ仕込み: この2行を削除するとバグになる]
-	if err := model.UpdateHeroExperience(h.db, newExp); err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to update experience"})
-	}
+	// [Lv2 バグ仕込み箇所]
+	// ここに model.UpdateHeroExperience の呼び出しが必要
 
 	return c.JSON(http.StatusOK, model.ClearStageResponse{
 		Message:          fmt.Sprintf("Stage '%s' cleared!", stage.Name),

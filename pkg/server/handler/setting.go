@@ -13,7 +13,7 @@ func RegisterRoutes(e *echo.Echo, hero *HeroHandler, stage *StageHandler, battle
 	// [Lv3 バグ仕込み箇所]
 	// バグ版では下の行がコメントアウトされており、404になる。
 	// この行を追加することで修正できる。
-	api.PUT("/hero/hp", hero.UpdateHP)
+	// api.PUT("/hero/hp", hero.UpdateHP)
 
 	// ステージ
 	api.GET("/stages", stage.GetStages)

@@ -7,7 +7,7 @@ Go バックエンド開発を体験するワークショップ用ゲームで�
 
 ```bash
 # DB だけ起動
-docker-compose up -d db
+docker compose up -d db
 
 # アプリ起動
 go run ./cmd/main.go
@@ -15,16 +15,38 @@ go run ./cmd/main.go
 
 http://localhost:8080 でゲームが開きます。
 
+## ビルド
+
+```bash
+# バイナリをビルド（bin/server に出力）
+make build
+
+# 実行
+./bin/server
+```
+
+## 開発（ホットリロード）
+
+ファイルを保存するたびに自動でリビルド・再起動されます。
+
+```bash
+# reflex のインストール（初回のみ）
+go install github.com/cespare/reflex@latest
+
+# 自動リロードで起動
+make dev
+```
+
 ## 停止
 
 ```bash
 # アプリ: Ctrl+C
 
 # DB を止める
-docker-compose down
+docker compose down
 
 # DB のデータごと消す（リセット）
-docker-compose down -v
+docker compose down -v
 ```
 
 ## トラブルシューティング
@@ -35,16 +57,16 @@ DB の起動が間に合っていない可能性があります。少し待っ�
 それでも失敗する場合はコンテナをリセットします。
 
 ```bash
-docker-compose down -v
-docker-compose up -d db
+docker compose down -v
+docker compose up -d db
 ```
 
 **ポート 3306 が使用中**
 
-`.env` と `docker-compose.yaml` のポート番号を揃えて変更してください（例: 3307）。
+`.env` と `docker compose.yaml` のポート番号を揃えて変更してください（例: 3307）。
 
 ```yaml
-# docker-compose.yaml
+# docker compose.yaml
 ports:
   - "3307:3306"
 ```
